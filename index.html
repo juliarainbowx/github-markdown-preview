@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>GitHub Markdown Preview with Vue.js</title>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div id="app" class="container">
+		<div class="row">
+			<div class="col-xs-12 header-text">
+				<h1>GitHub Markdown Preview</h1>
+				<h4>Kostyuchenko Julia</h4>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-xs-12 col-md-6">
+				<textarea id="editor" class="form-control" v-model="rawMarkdown">
+GitHub Flavored Markdown
+================================
+
+*View the [source of this content](http://github.github.com/github-flavored-markdown/sample_content.html).*
+
+You can insert any GitHub markdown here.
+
+I am a robot
+------------
+
+Maybe you want to print `robot` to the console 1000 times. Why not?
+
+    def robot_invasion
+      puts("robot " * 1000)
+    end
+
+You see, that was formatted as code because it's been indented by four spaces.
+
+How about we throw some angle braces and ampersands in there?
+
+
+	<div class="footer">
+	© 2017 Julia Julia
+	</div>
+				</textarea>
+			</div>
+		<div id="preview" class="col-xs-12 col-md-6">
+			<div class="panel panel-default">
+				<div class="panel-boy">
+					<article class="markdown-body">
+						{{{renderedMarkdown}}}	
+					</article>
+				</div>
+			</div>
+		</div>
+	</div>	
+<div class="row">
+	<div class="col-xs-12">
+		<button type="button" class="btn btn-primary pull-right" @click="renderPreview">Preview</button>
+	</div>
+</div>
+</div>
+
+<script src="https://code.jquery.com/jquery-2.2.0.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+
+<script src="https://cdn.jsdelivr.net/vue/1.0.16/vue.js"></script>
+<script src="https://cdn.jsdelivr.net/vue.resource/0.7.0/vue-resource.min.js"></script>
+
+<script>
+	let vm = new Vue({
+		el: '#app',
+		data: {
+			rawMarkdown: '',
+			renderedMarkdown: ''
+		},
+		methods: {
+			renderPreview: function() {
+				// POST request to GitHub API
+            	this.$http({
+                	url: 'https://api.github.com/markdown',
+                	method: 'POST',
+                	data: {text: this.rawMarkdown, mode: 'gfm'}
+            	}).then(function (response) {
+                	// success callback
+                	this.renderedMarkdown = response.data;
+            	}, function (response) {
+                	// error callback
+                	console.log(response.data);
+			});
+		}
+	}
+});
+</script>	
+</body>
+</html>
